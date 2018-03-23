@@ -1,5 +1,5 @@
 # IntelliJCar-JavaBotMVC :car: :oncoming_automobile:
-###Seu Carro na sua mão!
+### Seu Carro na sua mão!
 >> Bot telegram para integrar informações de seu automóvel ao seu smartphone via bot Telegram;
 
 ---
@@ -8,9 +8,8 @@ Bot criado para fins acadêmicos, para o estudo e aplicação do padrão de arqu
 
 ---
 
-
-#Tecnologias utilizadas
->> Aplicativo de mensagens Telegram, Linguagem de Programação JAVA e Python, microocontrolador Arduino, módulo GSM, MicroFramework Flask, arquitetura de software MVC.
+# Tecnologias utilizadas
+>> Aplicativo de mensagens Telegram, Linguagem de Programação JAVA (padrão de arquitetura de software MVC) e Python (MicroFramework Flask), microocontrolador Arduino, módulo GSM e RaspberryPI.
 
 ---
 
