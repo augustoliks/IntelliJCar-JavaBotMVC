@@ -16,15 +16,14 @@ public class GetJson {
 
 		String linha = br.readLine();
 
-		String json = null;
-		
-		while (linha != null) {
+		String json = "";
 
-			System.out.println(linha);
+		while (linha != null) {
+			json += linha;
+			System.out.println("Request from Server: "+linha);
 			linha = br.readLine();
-			json+=linha;
-			
+
 		}
 		return json;
-	}    
+	}
 }
