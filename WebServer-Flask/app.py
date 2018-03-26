@@ -31,6 +31,7 @@ def set_json():
     return read_json()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run()
+#    app.run(host='0.0.0.0', port=5000, debug=True)
 
 #http://localhost:5000/set?lat=10&lon=11&gas=12&bat=13
