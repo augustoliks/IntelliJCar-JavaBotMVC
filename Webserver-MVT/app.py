@@ -16,19 +16,13 @@ def teste():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run()   #heroku
-#    app.run(host='0.0.0.0', port=5000, debug=True) #local
+    app.run()
+#    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
-'''
-    Metodo de "set" de dados:
-        http://localhost:5000/set/gas=666&bat=666&lat=666&lon=666
-
-    Metodo de "get" de dados:
-        http://localhost:5000/get
-
-'''
+#http://localhost:5000/set/gas=666&bat=666&lat=666&lon=666
 
 
+#http://localhost:5000/set?lat=10&lon=11&gas=12&bat=13
 #https://jcar-bot.herokuapp.com/set?lat=666&lon=11&gas=12&bat=13
 #https://jcar-bot.herokuapp.com/get
