@@ -10,7 +10,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(Controller_get_data, "/get/")
-api.add_resource(Controller_set_data, "/set/gas=<gas>&bat=<bat>&lat=<lat>&lon=<lon>")
+api.add_resource(Controller_set_data, "/set/gas=<gas>&bat=<bat>&lat=<lat>&lon=<lon>&tsp=<tsp>")
 
 api.add_resource(Controller_set_balance, "/set/sal=<sal>&dad=<dad>")
 

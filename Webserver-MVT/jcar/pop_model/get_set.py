@@ -8,7 +8,8 @@ class GetSet():
                      'lat': None,
                      'lon': None,
                      'sal': None,
-                     'dad': None
+                     'dad': None,
+                     'tsp': None
                      }
 
     def read_json(self):
@@ -20,13 +21,14 @@ class GetSet():
         json.write( str(self.data) )
         json.close()
 
-    def set_data(self, gas, bat, lat, lon):
+    def set_data(self, gas, bat, lat, lon, tsp):
         self.read_json()
 
         self.data ['gas'] = gas
         self.data ['bat'] = bat
         self.data ['lat'] = lat
         self.data ['lon'] = lon
+        self.data ['tsp'] = tsp
 
         self.write_json()
 
