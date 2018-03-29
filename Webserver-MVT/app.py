@@ -23,6 +23,3 @@ if __name__ == '__main__':
 #http://localhost:5000/set/gas=666&bat=666&lat=666&lon=666
 
 
-#http://localhost:5000/set?lat=10&lon=11&gas=12&bat=13
-#https://jcar-bot.herokuapp.com/set?lat=666&lon=11&gas=12&bat=13
-#https://jcar-bot.herokuapp.com/get
