@@ -19,8 +19,8 @@ def teste():
     return render_template('index.html')
 
 if __name__ == '__main__':
-#    app.run()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run()
+#    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
 #http://localhost:5000/set/gas=666&bat=666&lat=666&lon=666

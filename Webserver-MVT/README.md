@@ -13,6 +13,8 @@
 # Link do Webserver
 > Este serviço esta alocado no HEROKU, neste link:
 >> https://jcar-eng.herokuapp.com/
+>> **Ou pode ser acessado localmente da seguinte maneira:**
+>>> http://localhost:5000/
 
 ## *Get* Informações:
 > Para receber informações:
@@ -21,3 +23,4 @@
 ## *Set* infomarções:
 > Para inserir informações:
 >> https://jcar-eng.herokuapp.com/set/gas=666&bat=666&lat=666&lon=666
+>> https://jcar-eng.herokuapp.com/set/sal=123&dad=123
