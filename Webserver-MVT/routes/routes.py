@@ -13,3 +13,7 @@ class Controller_get_data(Resource):
 class Controller_set_data(Resource):
     def get(self, gas, bat, lat, lon):
         return getter_setter.set_data(gas, bat, lat, lon)
+
+class Controller_set_balance(Resource):
+    def get(self, sal, dad):
+        return getter_setter.set_balance(sal, dad)
