@@ -16,3 +16,7 @@ class Controller_set_data(Resource):
 class Controller_set_balance(Resource):
     def get(self, sal, dad):
         return jsonify( getter_setter.set_balance(sal, dad) )
+
+class Controller_get_history(Resource):
+    def get(self):
+        return jsonify( getter_setter.get_history() )

@@ -1,5 +1,7 @@
 from jcar.utils.utils import Util
 import ast
+from datetime import datetime
+
 class GetSet():
 
     def __init__(self):
@@ -11,15 +13,46 @@ class GetSet():
                      'dad': None,
                      'tsp': None
                      }
+        self.history = {'gas': None,
+                     'bat': None,
+                     'lat': None,
+                     'lon': None,
+                     'sal': None,
+                     'dad': None,
+                     'tsp': None
+                     }
+
+    def read_history(self):
+        load = open('database/history.json')
+        self.history = ast.literal_eval( load.read() )
+
+    def write_history(self, req_hms):
+        self.read_history()
+        self.history[req_hms] = self.data
+
+        json = open ('database/history.json', 'w')
+        json.write( str(self.history) )
+        json.close()
+
 
     def read_json(self):
         load = open('database/informations.json')
         self.data = ast.literal_eval( load.read() )
 
     def write_json(self):
+        req_min = int(self.data['tsp'][-2:])
+        req_hms = Util.utc_to_br(self.data['tsp'][-6:])
+
+        if req_min % 1 == 0:
+            self.write_history(req_hms)
+
         json = open ('database/informations.json', 'w')
         json.write( str(self.data) )
         json.close()
+
+    def get_history(self):
+        self.read_history()
+        return self.history
 
     def set_data(self, gas, bat, lat, lon, tsp):
         self.read_json()
