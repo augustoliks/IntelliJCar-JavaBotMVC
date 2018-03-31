@@ -1,7 +1,7 @@
 class Util():
 
-    def utc_to_br(utc_hms):
-        utc_h = int(utc_hms[:-4])
+    def utc_to_br(utc_hm):
+        utc_h = int(utc_hm)
         br_h = ""
         if utc_h - 3 <= 0:
             if utc_h == 0:
@@ -16,4 +16,4 @@ class Util():
                   br_h += str(utc_h - 3)
             else:
                   br_h = str(utc_h - 3)
-        return br_h+utc_hms[2:]
+        return br_h+utc_hms[:-2]

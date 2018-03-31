@@ -26,25 +26,24 @@ class GetSet():
         load = open('database/history.json')
         self.history = ast.literal_eval( load.read() )
 
-    def write_history(self, req_hms):
+    def write_history(self):
         self.read_history()
-        self.history[req_hms] = self.data
+        utc_hm = self.data['tsp'][-6:-2]
+        self.history[utc_hm] = self.data
 
         json = open ('database/history.json', 'w')
         json.write( str(self.history) )
         json.close()
-
 
     def read_json(self):
         load = open('database/informations.json')
         self.data = ast.literal_eval( load.read() )
 
     def write_json(self):
-        req_min = int(self.data['tsp'][-2:])
-        req_hms = Util.utc_to_br(self.data['tsp'][-6:])
+        req_min = int(self.data['tsp'][-4:-2])
 
         if req_min % 1 == 0:
-            self.write_history(req_hms)
+            self.write_history()
 
         json = open ('database/informations.json', 'w')
         json.write( str(self.data) )
