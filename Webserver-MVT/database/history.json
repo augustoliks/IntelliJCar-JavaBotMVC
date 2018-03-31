@@ -1,1 +1,1 @@
-{"DATA-HORA-REQUISICAO": {"bat": None,"dad": None,"gas": None,"lat": None,"lon": None,"sal": None, "tsp": None}}
+{"UTC-DATA-HORA-REQUISICAO": {'dad': u'CONSUMO/DADOS', 'bat': u'BATERIA', 'sal': u'SALDO', 'gas': u'GASOLINA', 'lon': u'LONGITUDE', 'lat': u'LATITUDE', 'tsp': u'UTC-TIMESTAMP-REQUISICAO'}}

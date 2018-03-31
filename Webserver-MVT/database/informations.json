@@ -1,1 +1,1 @@
-{'dad': u'8888', 'bat': u'666', 'sal': u'8888', 'gas': u'666', 'lon': u'666', 'lat': u'666', 'tsp': u'20180331130943'}
+{'dad': u'CONSUMO/DADOS', 'bat': u'BATERIA', 'sal': u'SALDO', 'gas': u'GASOLINA', 'lon': u'LONGITUDE', 'lat': u'LATITUDE', 'tsp': u'UTC-TIMESTAMP-REQUISICAO'}
