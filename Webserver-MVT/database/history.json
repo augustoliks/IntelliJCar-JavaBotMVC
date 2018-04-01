@@ -1,1 +1,1 @@
-{"UTC-DATA-HORA-REQUISICAO": {'dad': u'CONSUMO/DADOS', 'bat': u'BATERIA', 'sal': u'SALDO', 'gas': u'GASOLINA', 'lon': u'LONGITUDE', 'lat': u'LATITUDE', 'tsp': u'UTC-TIMESTAMP-REQUISICAO'}}
+{"UTC-HORA-MIN-REQUISICAO": {"dad": "CONSUMO/DADOS", "bat": "BATERIA", "sal": "SALDO", "gas": "GASOLINA", "lon": "LONGITUDE", "lat": "LATITUDE", "tsp": "UTC-TIMESTAMP-REQUISICAO","gsm": "NIVEL-SINAL-GSM","maps": "GOOGLE-MAPS"}}

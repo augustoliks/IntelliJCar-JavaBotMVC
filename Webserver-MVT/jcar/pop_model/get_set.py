@@ -11,15 +11,20 @@ class GetSet():
                      'lon': None,
                      'sal': None,
                      'dad': None,
-                     'tsp': None
+                     'tsp': None,
+                     'gsm': None,
+                     'maps': None
                      }
+
         self.history = {'gas': None,
                      'bat': None,
                      'lat': None,
                      'lon': None,
                      'sal': None,
                      'dad': None,
-                     'tsp': None
+                     'tsp': None,
+                     'gsm': None,
+                     'maps': None
                      }
 
     def read_history(self):
@@ -53,7 +58,7 @@ class GetSet():
         self.read_history()
         return self.history
 
-    def set_data(self, gas, bat, lat, lon, tsp):
+    def set_data(self, gas, bat, lat, lon, tsp, gsm):
         self.read_json()
 
         self.data ['gas'] = gas
@@ -61,6 +66,8 @@ class GetSet():
         self.data ['lat'] = lat
         self.data ['lon'] = lon
         self.data ['tsp'] = tsp
+        self.data ['gsm'] = gsm
+        self.data ['maps'] = "http://maps.google.com/maps?q="+lat+","+lon
 
         self.write_json()
 
