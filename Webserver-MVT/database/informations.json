@@ -1,1 +1,1 @@
-{"dad": "CONSUMO/DADOS", "bat": "BATERIA", "sal": "SALDO", "gas": "GASOLINA", "lon": "LONGITUDE", "lat": "LATITUDE", "tsp": "UTC-TIMESTAMP-REQUISICAO","gsm": "NIVEL-SINAL-GSM","maps": "GOOGLE-MAPS"}
+{'gsm': '132', 'dad': 'CONSUMO/DADOS', 'bat': '123', 'lat': '123', 'lon': '123', 'sal': 'SALDO', 'tsp': '20180105201310', 'gas': '123', 'maps': 'http://maps.google.com/maps?q=123,123'}

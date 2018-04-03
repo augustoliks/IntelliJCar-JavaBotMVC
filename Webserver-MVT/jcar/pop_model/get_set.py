@@ -86,3 +86,7 @@ class GetSet():
         self.write_json()
 
         return self.data
+
+    def get_id(self, id):
+        self.get_history()
+        return self.history[str(id)]

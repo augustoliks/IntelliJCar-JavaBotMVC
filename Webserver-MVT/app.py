@@ -6,6 +6,7 @@ from routes.routes import Controller_get_data
 from routes.routes import Controller_set_data
 from routes.routes import Controller_set_balance
 from routes.routes import Controller_get_history
+from routes.routes import Controller_get_id
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,6 +16,8 @@ api.add_resource(Controller_set_balance, "/set/sal=<sal>&dad=<dad>")
 
 api.add_resource(Controller_get_data, "/get/")
 api.add_resource(Controller_get_history, "/get/history")
+
+api.add_resource(Controller_get_id, "/get/id=<id>")
 
 @app.route("/", methods=['GET'])
 def teste():
