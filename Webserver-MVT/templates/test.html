@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Jcar</title>
+    </head>
+    <body>
+{% print (json['0000']['lat']) %}
+<p>
+      {% for item in json %}
+          {{json[item]['lat']}}
+          <p>
+      {% endfor %}
+
+    </body>
+</html>
