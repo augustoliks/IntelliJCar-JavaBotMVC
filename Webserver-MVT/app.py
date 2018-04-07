@@ -8,6 +8,7 @@ from routes.routes import Controller_set_balance
 from routes.routes import Controller_get_history
 from routes.routes import Controller_get_id
 import ast
+
 app = Flask(__name__)
 #app.jinja_env.line_statement_prefix = '$'
 api = Api(app)

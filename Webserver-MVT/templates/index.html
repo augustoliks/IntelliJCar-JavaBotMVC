@@ -20,6 +20,7 @@
 
         var stations=[]
         {% for item in json %}
+          {% if item!='x' %}
           stations.push(
             {
               lat: {{json[item]['lat']}},
@@ -27,6 +28,7 @@
               name: 'Time: {{item}} (HourMinute HHMM)\nBattery: {{json[item]['bat']}}\nJcar Nivel: {{json[item]['gsm']}}\nBalance Avaible: {{json[item]['sal']}}\nFranchise Avaible: {{json[item]['dad']}}\nGasoline: {{json[item]['gas']}}\nMaps: {{json[item]['maps']}}',
             }
           )
+          {% endif %}
         {% endfor %}
 
         // Zoom and center map automatically by stations (each station will be in visible map area)
