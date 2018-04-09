@@ -13,6 +13,27 @@ public class Model implements Subject {
 
 	private static Model uniqueInstance;
 
+	private String time	= "mostRecent";
+		
+	public void searchTime(Update update) {
+
+		System.out.println("estou em time");		
+		
+		if (update.message().text().equals("now")) {
+			this.time = "mostRecent";
+		}
+		else {
+			this.time = update.message().text();
+		}
+		
+		String data = "Results for the time: "+time;
+
+		this.notifyObservers(update.message().chat().id(), data);
+		System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
+
+	}
+
+	
 	public static Model getInstance() {
 		if (uniqueInstance == null) {
 			uniqueInstance = new Model();
@@ -20,11 +41,11 @@ public class Model implements Subject {
 		return uniqueInstance;
 	}
 
-	public void addcars(Car car) {
+	public void addCars(Car car) {
 		this.cars.add(car);
 	}
 
-	public void searchBattery(Update update) throws JsonSyntaxException, IOException {
+	public void searchBat(Update update) throws JsonSyntaxException, IOException {
 		this.populityDatas(update);
 
 		System.out.println("Estou em Bateria");
@@ -38,27 +59,29 @@ public class Model implements Subject {
 
 		if (data != null) {
 			this.notifyObservers(update.message().chat().id(), data);
+			System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
 		} else {
-			this.notifyObservers(update.message().chat().id(), "NOT FOUND");
+			this.notifyObservers(update.message().chat().id(), "NOT FOUND(car not registred)");
 		}
 	}
 
-	public void searchTemperature(Update update) throws JsonSyntaxException, IOException {
+	public void searchBal(Update update) throws JsonSyntaxException, IOException {
 		this.populityDatas(update);
 
-		System.out.println("Estou em Temperatura");
+		System.out.println("Estou em Saldo");
 		String data = null;
 		for (Car car : cars) {
 
 			if (car.getId() == update.message().chat().id()) {
-				data = String.valueOf(car.getLat());
+				data = car.getBat();
 			}
 		}
 
 		if (data != null) {
 			this.notifyObservers(update.message().chat().id(), data);
+			System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
 		} else {
-			this.notifyObservers(update.message().chat().id(), "NOT FOUND");
+			this.notifyObservers(update.message().chat().id(), "NOT FOUND(car not registred)");
 		}
 
 	}
@@ -67,17 +90,18 @@ public class Model implements Subject {
 		this.populityDatas(update);
 		System.out.println("Estou em GPS");
 		String data = null;
-		
+
 		for (Car car : cars) {
 			if (car.getId() == update.message().chat().id()) {
-				data = car.getLon();
+				data = car.getMaps();
 			}
 		}
 
 		if (data != null) {
 			this.notifyObservers(update.message().chat().id(), data);
+			System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
 		} else {
-			this.notifyObservers(update.message().chat().id(), "NOT FOUND");
+			this.notifyObservers(update.message().chat().id(), "NOT FOUND(car not registred)");
 		}
 
 	}
@@ -96,9 +120,54 @@ public class Model implements Subject {
 
 		if (data != null) {
 			this.notifyObservers(update.message().chat().id(), data);
+			System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
 
 		} else {
-			this.notifyObservers(update.message().chat().id(), "NOT FOUND");
+			this.notifyObservers(update.message().chat().id(), "NOT FOUND(car not registred)");
+		}
+	}
+
+	public void searchGsm(Update update) throws JsonSyntaxException, IOException {
+		this.populityDatas(update);
+		System.out.println("Estou em Gsm");
+		String data = null;
+
+		for (Car car : cars) {
+
+			if (car.getId() == update.message().chat().id()) {
+				data = car.getGsm();
+			}
+		}
+
+		if (data != null) {
+			this.notifyObservers(update.message().chat().id(), data);
+			System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
+
+		} else {
+			this.notifyObservers(update.message().chat().id(), "NOT FOUND(car not registred)");
+		}
+
+	}
+
+
+	public void searchNet(Update update) throws JsonSyntaxException, IOException {
+		this.populityDatas(update);
+		System.out.println("Estou em Net");
+		String data = null;
+
+		for (Car car : cars) {
+
+			if (car.getId() == update.message().chat().id()) {
+				data = car.getDad();
+			}
+		}
+
+		if (data != null) {
+			this.notifyObservers(update.message().chat().id(), data);
+			System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
+
+		} else {
+			this.notifyObservers(update.message().chat().id(), "NOT FOUND(car not registred)");
 		}
 
 	}
@@ -122,27 +191,20 @@ public class Model implements Subject {
 
 		for (Car car : cars) {
 			if (car.getId() == update.message().chat().id()) {
-				System.out.println("id:"+car.getId()+"bat: " + car.getBat() + "\nGas: " + car.getGas() + "\nLat: " + car.getLat()
-				+ "\nLon: " + car.getLon());
 
-				System.out.println(new GetJson().getJsonFromServer());
-				
 				cars.remove(car);
-				
-				car = gson.fromJson(new GetJson().getJsonFromServer(), Car.class);
+
+				car = gson.fromJson(new ConnectAPI().getJsonFromServer(this.time), Car.class);
 				car.setId(update.message().chat().id());
-				addcars(car);
-				
-				System.out.println("id:"+car.getId()+"bat: " + car.getBat() + "\nGas: " + car.getGas() + "\nLat: " + car.getLat()
-						+ "\nLon: " + car.getLon());
+				addCars(car);
+
 			}
 		}
-
-		System.out.println("Todos os carros");
-		for (Car car : cars) {
-			System.out.println("bat: " + car.getBat() + "\nGas: " + car.getGas() + "\nLat: " + car.getLat() + "\nLon: "
-					+ car.getLon());
-		}
+		/*
+		 * System.out.println("Todos os carros"); for (Car car : cars) {
+		 * System.out.println("bat: " + car.getBat() + "\nGas: " + car.getGas() +
+		 * "\nLat: " + car.getLat() + "\nLon: " + car.getLon()); }
+		 */
 	}
 
 	public void registerCar(Update update) {
@@ -159,7 +221,7 @@ public class Model implements Subject {
 
 		if (exist == false) {
 			System.out.println("Seu carro agr esta cadastrado: " + update.message().chat().id());
-			addcars(new Car(update.message().chat().id()));
+			addCars(new Car(update.message().chat().id()));
 		}
 
 		for (Car car : cars) {

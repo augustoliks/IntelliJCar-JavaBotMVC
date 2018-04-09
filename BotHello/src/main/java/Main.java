@@ -2,7 +2,7 @@ import java.io.IOException;
 
 import com.google.gson.JsonSyntaxException;
 
-public class Main {
+public class Main { 
 	
 	private static Model model;
 
