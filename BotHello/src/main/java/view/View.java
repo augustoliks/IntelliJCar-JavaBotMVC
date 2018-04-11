@@ -24,6 +24,7 @@ import controller.ControllerGPS;
 import controller.ControllerGas;
 import controller.ControllerGsm;
 import controller.ControllerNet;
+import controller.ControllerRegisterCar;
 import controller.SearchStrategy;
 import model.Model;
 import model.ToolBox;
@@ -35,7 +36,7 @@ public class View implements Observer {
 		this.bot = TelegramBotAdapter.build(token);
 		this.getDialogues();
 	}
-	
+
 	private Model model;
 	private TelegramBot bot;
 
@@ -43,17 +44,16 @@ public class View implements Observer {
 	SendResponse sendResponse;
 	BaseResponse baseResponse;
 
-	private static String msgHello;	
-	private static String btnGas; 
-	private static String btnGps; 
-	private static String btnGsm; 
-	private static String btnNet; 
-	private static String btnTsp; 
-	private static String btnBat; 
-	private static String btnBal; 
-	
+	private static String msgHello;
+	private static String btnGas;
+	private static String btnGps;
+	private static String btnGsm;
+	private static String btnNet;
+	private static String btnTsp;
+	private static String btnBat;
+	private static String btnBal;
 
-	private void getDialogues() throws FileNotFoundException, IOException {	
+	private void getDialogues() throws FileNotFoundException, IOException {
 		this.msgHello = ToolBox.loadDialogue("HELLO");
 		this.btnGas = ToolBox.loadDialogue("GAS");
 		this.btnGps = ToolBox.loadDialogue("GPS");
@@ -63,12 +63,10 @@ public class View implements Observer {
 		this.btnBat = ToolBox.loadDialogue("BAT");
 		this.btnBal = ToolBox.loadDialogue("BAL");
 	}
-	
-	
+
 	int queuesIndex = 0;
 	int state = 0;
 	static final int StateTIME = 1;
-	static final int StateGPS = 2;
 
 	SearchStrategy searchStrategy; // Strategy Pattern -- connection View -> Controller
 
@@ -91,19 +89,13 @@ public class View implements Observer {
 					this.searchBehaviour = true;
 				}
 
-
-				if (state == StateGPS) {
-					setControllerSearch(new ControllerDateIndex(model, this));
-					this.searchBehaviour = true;
-				}
-
-				
 				else if (update.message().text().equals(null)) {
 					continue;
 				}
 
 				else if (update.message().text().equals(btnTsp)) {
-					sendResponse = bot.execute(new SendMessage(update.message().chat().id(), ToolBox.loadDialogue("SEARCH-TIME")));
+					sendResponse = bot.execute(
+							new SendMessage(update.message().chat().id(), ToolBox.loadDialogue("SEARCH-TIME")));
 					state = StateTIME;
 				}
 
@@ -134,11 +126,14 @@ public class View implements Observer {
 				} else {
 					System.out.println("Ok");
 					if (update.message().text().equals("/start")) {
-						model.registerCar(update);
+						setControllerSearch(new ControllerRegisterCar(model, this));
+						this.searchBehaviour = true;
+
 						sendResponse = bot.execute(new SendMessage(update.message().chat().id(),
-								"Hello " + update.message().chat().firstName() + "!!!\n" + msgHello).replyMarkup(
-										new ReplyKeyboardMarkup(new String[] { btnGps, btnGas }, new String[] { btnBat, btnGsm },
-												new String[] { btnBal, btnNet }, new String[] { btnTsp })));
+								"Hello " + update.message().chat().firstName() + "!!!\n" + msgHello)
+										.replyMarkup(new ReplyKeyboardMarkup(new String[] { btnGps, btnGas },
+												new String[] { btnBat, btnGsm }, new String[] { btnBal, btnNet },
+												new String[] { btnTsp })));
 
 					}
 					if (update.callbackQuery() != null) {
@@ -146,7 +141,7 @@ public class View implements Observer {
 								update.callbackQuery().data()));
 					}
 				}
-				
+
 				if (this.searchBehaviour == true) {
 					this.callController(update);
 				}
