@@ -1,0 +1,7 @@
+package view;
+
+public interface Observer {
+
+	public void updateObserver(long chatId, String studentsData);
+	
+}
