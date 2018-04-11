@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
+  
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.pengrad.telegrambot.model.Update;
@@ -19,10 +21,9 @@ public class Model implements Subject {
 
 	private static Model uniqueInstance;
 
-	private String time = "now";
-	private String startTime = null;
-	private String endTime = null;
-
+    Map<Long,String> time = new HashMap<Long,String>();
+    
+	
 	@Override
 	public void registerObserver(Observer observer) {
 		observers.add(observer);
@@ -46,35 +47,6 @@ public class Model implements Subject {
 		this.cars.add(car);
 	}
 
-	public void searchTime(Update update) throws FileNotFoundException, IOException {
-
-		System.out.println("estou em time");
-
-		String data = null;
-
-		if (update.message().text().equals("now")) {
-			this.time = "now";
-			data = "Results for the time: " + time;
-		} else if (update.message().text().length() == 4) {
-			this.time = update.message().text();
-			data = "Results for the time: " + time;
-		}
-
-		else if (update.message().text().length() == 9) {
-			String time[] = update.message().text().split("-");
-			this.startTime = time[0];
-			this.endTime = time[1];
-			this.time = startTime + endTime;
-			data = "Results for the time: " + time[0] + " to " + time[1];
-
-		} else {
-			data = ToolBox.loadDialogue("DATA-NOT-VALID");
-		}
-
-		this.notifyObservers(update.message().chat().id(), data);
-		System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
-
-	}
 
 	public void searchBat(Update update) throws JsonSyntaxException, IOException {
 		this.populityDatas(update);
@@ -117,32 +89,74 @@ public class Model implements Subject {
 
 	}
 
+	public void searchTime(Update update) throws FileNotFoundException, IOException {
+
+		System.out.println("estou em time");
+
+		String data = null;
+		
+		if (update.message().text().equals("now")) {
+			
+			this.time.put(update.message().chat().id(), new String ("now"));
+			data = "Results for the time: " + time.get(update.message().chat().id());
+			
+			
+		} else if (update.message().text().length() == 4) {
+
+			this.time.put(update.message().chat().id(), new String (update.message().text()));
+			data = "Results for the time: " + time.get(update.message().chat().id());
+	
+		}
+
+		else if (update.message().text().length() == 9) {
+			
+			String time[] = update.message().text().split("-");			
+			this.time.put(update.message().chat().id(), new String (time[0]+"-"+time[1]));
+			data = "Results for the time: " + time[0] + " to " + time[1];
+			System.out.println("CARLOS: "+this.time.get(update.message().chat().id()));
+		} else {
+			data = ToolBox.loadDialogue("DATA-NOT-VALID");
+		}
+
+		this.notifyObservers(update.message().chat().id(), data);
+		System.out.println("Enviei isso: " + data + " -> " + update.message().chat().username());
+
+	}
+
+	
 	public void searchGPS(Update update) throws JsonSyntaxException, IOException {
-		this.populityDatas(update);
+		
 		System.out.println("Estou em GPS");
 		String data = null;
-
-		if (time.equals("now")) {
+	
+		if (this.time.get(update.message().chat().id()).equals("now")) {
+			this.populityDatas(update);
 			for (Car car : cars) {
 				if (car.getId() == update.message().chat().id()) {
 					data = "Your car's status: " + ToolBox.loadApi("GPS-NOW") + "\n\nLocalization in Google Maps: "
 							+ car.getMaps();
 				}
 			}
-		} else if (time.length() == 4) {
+		} else if (this.time.get(update.message().chat().id()).length() == 4) {
+			this.populityDatas(update);
 			for (Car car : cars) {
 				if (car.getId() == update.message().chat().id()) {
 					data = "Your car's status: " + ToolBox.loadApi("GPS-NOW") + "\n\nLocalization in Google Maps: "
 							+ car.getMaps();
 				}
 			}
-		} else {
+		} else if (this.time.get(update.message().chat().id()).length() == 9) {
 			for (Car car : cars) {
+				
+				String time[] = this.time.get(update.message().chat().id()).split("-");	
 				if (car.getId() == update.message().chat().id()) {
-					data = "Your car's status: " + ToolBox.loadApi("GPS-TIME") + "start=" + this.startTime + "&"
-							+ "end=" + this.endTime;
+					data = "Your car's status: " + ToolBox.loadApi("GPS-TIME") + "start=" + time[0] + "&"
+							+ "end=" + time[1];
 				}
 			}
+		}
+		else {
+			data ="Time not valide";
 		}
 		if (data != null) {
 			this.notifyObservers(update.message().chat().id(), data);
@@ -228,7 +242,8 @@ public class Model implements Subject {
 			if (cars.get(k).getId() == update.message().chat().id()) {
 
 				Car c = new Car(update.message().chat().id());
-				c = gson.fromJson(new ConnectAPI().getJsonFromServer(this.time).toString(), Car.class);
+				System.out.println("xxx: "+this.time.get(update.message().chat().id()) );
+				c = gson.fromJson(new ConnectAPI().getJsonFromServer( this.time.get(update.message().chat().id()) ).toString(), Car.class);
 				c.setId(update.message().chat().id());
 
 				cars.remove(k);
@@ -238,7 +253,7 @@ public class Model implements Subject {
 		}
 
 	}
-
+ 
 	public void registerCar(Update update) {
 		System.out.println("Verificando instancia de carro");
 
@@ -254,10 +269,13 @@ public class Model implements Subject {
 		if (exist == false) {
 			System.out.println("Seu carro agr esta cadastrado: " + update.message().chat().id());
 			addCars(new Car(update.message().chat().id()));
+			this.time.put(update.message().chat().id(), new String ("now"));
 		}
 
 		for (Car car : cars) {
 			System.out.println(car.getId());
 		}
+		
+				
 	}
 }
