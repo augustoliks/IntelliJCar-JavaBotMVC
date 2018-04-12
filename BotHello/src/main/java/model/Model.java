@@ -123,12 +123,15 @@ public class Model implements Subject {
 
 	}
 
-	
+
 	public void searchGPS(Update update) throws JsonSyntaxException, IOException {
 		
 		System.out.println("Estou em GPS");
 		String data = null;
 	
+		System.out.println(">>>>>: "+update.message().chat().id());
+		System.out.println(">>>: "+this.time.get(update.message().chat().id()).equals("now"));
+		
 		if (this.time.get(update.message().chat().id()).equals("now")) {
 			this.populityDatas(update);
 			for (Car car : cars) {

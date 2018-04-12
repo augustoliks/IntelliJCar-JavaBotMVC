@@ -74,11 +74,21 @@ public class View implements Observer {
 
 	public void receiveUsersMessages() throws JsonSyntaxException, IOException {
 
+		updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
+		
+		List<Update> updates = updatesResponse.updates();
+		System.out.println("Limpando a lista");
+		for (Update update : updates) {
+			queuesIndex = update.updateId() + 1;
+			System.out.println(update.message().text());
+		}
+		System.out.println("Lista limpa!\n");
+
 		while (true) {
 
 			updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
-
-			List<Update> updates = updatesResponse.updates();
+			
+			updates = updatesResponse.updates();
 
 			for (Update update : updates) {
 
