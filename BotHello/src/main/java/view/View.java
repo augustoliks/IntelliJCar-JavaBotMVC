@@ -77,7 +77,7 @@ public class View implements Observer {
 		updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
 		
 		List<Update> updates = updatesResponse.updates();
-		System.out.println("Limpando a lista");
+		System.out.println("Limpando a lista...");
 		for (Update update : updates) {
 			queuesIndex = update.updateId() + 1;
 			System.out.println(update.message().text());
@@ -92,6 +92,10 @@ public class View implements Observer {
 
 			for (Update update : updates) {
 
+				System.out.println("Requisição numero: "+update.updateId());
+				System.out.println("Nome do usuário: "+update.message().chat().username());
+				System.out.println("Id do usuário: "+update.message().chat().id());
+				
 				queuesIndex = update.updateId() + 1;
 
 				if (state == StateTIME) {
