@@ -2,7 +2,9 @@ package view;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.JsonSyntaxException;
 import com.pengrad.telegrambot.TelegramBot;
@@ -65,8 +67,17 @@ public class View implements Observer {
 	}
 
 	int queuesIndex = 0;
-	int state = 0;
-	static final int StateTIME = 1;
+
+	static final int stateNOTHING = 0;
+	static final int stateTIME = 1;
+	static final int stateGAS = 2;
+	static final int stateGPS = 3;
+	static final int stateGSM = 4;
+	static final int stateNET = 5;
+	static final int stateBAT = 6;
+	static final int stateBAL = 7;
+
+	private Map<Long, Integer> state = new HashMap<Long, Integer>();
 
 	SearchStrategy searchStrategy; // Strategy Pattern -- connection View -> Controller
 
@@ -75,85 +86,136 @@ public class View implements Observer {
 	public void receiveUsersMessages() throws JsonSyntaxException, IOException {
 
 		updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
-		
+
 		List<Update> updates = updatesResponse.updates();
+
 		System.out.println("Limpando a lista...");
+
 		for (Update update : updates) {
 			queuesIndex = update.updateId() + 1;
 			System.out.println(update.message().text());
 		}
+
 		System.out.println("Lista limpa!\n");
 
 		while (true) {
 
 			updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
-			
+
 			updates = updatesResponse.updates();
 
 			for (Update update : updates) {
+				System.out.println(">>> CLASSE VIEW:");
+				System.out.println("\tRequisição numero: " + update.updateId());
+				System.out.println("\tNome do usuário: " + update.message().chat().username());
+				System.out.println("\tId do usuário: " + update.message().chat().id());
+				System.out.println("\tEscreveu: " + update.message().text() + "\n");
 
-				System.out.println("Requisição numero: "+update.updateId());
-				System.out.println("Nome do usuário: "+update.message().chat().username());
-				System.out.println("Id do usuário: "+update.message().chat().id());
-				
 				queuesIndex = update.updateId() + 1;
 
-				if (state == StateTIME) {
-					setControllerSearch(new ControllerDateIndex(model, this));
+				try {
+					if (update.message().text().equals(null)) {
+						continue;
+					}
+				}catch(Exception e) {
+					System.out.println("mensagem nula ou nao texto...");
+					continue;
+				}
+				
+				if (update.message().text().equals("/start")) {
+
+					this.state.put(update.message().chat().id(), stateNOTHING);
+					setControllerSearch(new ControllerRegisterCar(model, this));
 					this.searchBehaviour = true;
+
+					sendResponse = bot.execute(new SendMessage(update.message().chat().id(),
+							"Hello " + update.message().chat().firstName() + "!!!\n" + msgHello)
+									.replyMarkup(new ReplyKeyboardMarkup(new String[] { btnGps, btnGas },
+											new String[] { btnBat, btnNet }, new String[] { btnBal, btnGsm },
+											new String[] { btnTsp })));
+
 				}
 
-				else if (update.message().text().equals(null)) {
+				if (state.get(update.message().chat().id()) == null) {
 					continue;
 				}
 
-				else if (update.message().text().equals(btnTsp)) {
+				if (update.message().text().equals(btnTsp)) {
 					sendResponse = bot.execute(
 							new SendMessage(update.message().chat().id(), ToolBox.loadDialogue("SEARCH-TIME")));
-					state = StateTIME;
+					state.put(update.message().chat().id(), stateTIME);
+					continue;
 				}
 
 				else if (update.message().text().equals(btnBat)) {
-					setControllerSearch(new ControllerBat(model, this));
-					this.searchBehaviour = true;
+					state.put(update.message().chat().id(), stateBAT);
 
 				} else if (update.message().text().equals(btnBal)) {
-					setControllerSearch(new ControllerBal(model, this));
-					this.searchBehaviour = true;
+					state.put(update.message().chat().id(), stateBAL);
 
 				} else if (update.message().text().equals(btnGas)) {
-					setControllerSearch(new ControllerGas(model, this));
-					this.searchBehaviour = true;
+					state.put(update.message().chat().id(), stateGAS);
 
 				} else if (update.message().text().equals(btnGps)) {
-					setControllerSearch(new ControllerGPS(model, this));
-					this.searchBehaviour = true;
+					state.put(update.message().chat().id(), stateGPS);
 
 				} else if (update.message().text().equals(btnGsm)) {
-					setControllerSearch(new ControllerGsm(model, this));
-					this.searchBehaviour = true;
+					state.put(update.message().chat().id(), stateGSM);
 
 				} else if (update.message().text().equals(btnNet)) {
-					setControllerSearch(new ControllerNet(model, this));
-					this.searchBehaviour = true;
+					state.put(update.message().chat().id(), stateNET);
+				}
 
-				} else {
-					System.out.println("Ok");
-					if (update.message().text().equals("/start")) {
-						setControllerSearch(new ControllerRegisterCar(model, this));
+				switch (state.get(update.message().chat().id())) {
+
+					case stateTIME: {
+						setControllerSearch(new ControllerDateIndex(model, this));
 						this.searchBehaviour = true;
-
-						sendResponse = bot.execute(new SendMessage(update.message().chat().id(),
-								"Hello " + update.message().chat().firstName() + "!!!\n" + msgHello)
-										.replyMarkup(new ReplyKeyboardMarkup(new String[] { btnGps, btnGas },
-												new String[] { btnBat, btnGsm }, new String[] { btnBal, btnNet },
-												new String[] { btnTsp })));
-
+						break;
 					}
-					if (update.callbackQuery() != null) {
-						sendResponse = bot.execute(new SendMessage(update.callbackQuery().message().chat().id(),
-								update.callbackQuery().data()));
+	
+					case stateBAL: {
+						setControllerSearch(new ControllerBal(model, this));
+						this.searchBehaviour = true;
+						break;
 					}
+	
+					case stateBAT: {
+						setControllerSearch(new ControllerBat(model, this));
+						this.searchBehaviour = true;
+						break;
+					}
+	
+					case stateGAS: {
+						setControllerSearch(new ControllerGas(model, this));
+						this.searchBehaviour = true;
+						break;
+					}
+					case stateGSM: {
+						setControllerSearch(new ControllerGsm(model, this));
+						this.searchBehaviour = true;
+						break;
+					}
+					case stateGPS: {
+						setControllerSearch(new ControllerGPS(model, this));
+						this.searchBehaviour = true;
+						break;
+					}
+	
+					case stateNET: {
+						setControllerSearch(new ControllerNet(model, this));
+						this.searchBehaviour = true;
+						break;
+					}
+	
+					default: {
+						break;
+					}
+				}
+
+				if (update.callbackQuery() != null) {
+					sendResponse = bot.execute(new SendMessage(update.callbackQuery().message().chat().id(),
+							update.callbackQuery().data()));
 				}
 
 				if (this.searchBehaviour == true) {
@@ -180,6 +242,6 @@ public class View implements Observer {
 	public void updateObserver(long chatId, String data) {
 		sendResponse = bot.execute(new SendMessage(chatId, data));
 		this.searchBehaviour = false;
-		this.state = 0;
+		state.put(chatId, stateNOTHING);
 	}
 }

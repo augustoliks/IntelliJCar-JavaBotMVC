@@ -22,4 +22,4 @@ public class ControllerRegisterCar implements SearchStrategy {
 		view.sendTypingMessage(update);
 		model.registerCar(update);
 	}
-}
+} 
