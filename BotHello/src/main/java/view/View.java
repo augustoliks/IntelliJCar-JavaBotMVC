@@ -118,7 +118,7 @@ public class View implements Observer {
 						continue;
 					}
 				}catch(Exception e) {
-					System.out.println("mensagem nula ou nao texto...");
+					System.out.println("mensagem nula ou nao eh texto...");
 					continue;
 				}
 				

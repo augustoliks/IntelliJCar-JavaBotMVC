@@ -11,7 +11,7 @@ public class ConnectAPI {
 	public String getJsonFromServer(String index) throws IOException {
 		String uri;
 
-		System.out.println(">>> CLASSE ConnectAPI\n->\tRotina getJsonFromServer: index="+index);
+		System.out.println(">>> CLASSE ConnectAPI\n->\tRotina getJsonFromServer: <INDEX>"+index);
 		
 		if (index.equals("now")) {
 			uri = "get/";

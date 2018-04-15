@@ -152,16 +152,6 @@ public class Model implements Subject {
 					&& this.time.get(update.message().chat().id()).length() == 4) {
 				data = "Your car's status: " + ToolBox.loadApi("GPS-NOW") + "\n\nLocalization in Google Maps: "
 						+ this.cars.get(index).getMaps();
-
-				// Time = UTC de 9 posicoes
-			} else if (ToolBox.validateUTC(this.time.get(update.message().chat().id()))) {
-
-				String corte = String.valueOf(this.time.get(update.message().chat().id()).charAt(4));
-				String time[] = this.time.get(update.message().chat().id()).split(corte);
-
-				data = "Your car's status: " + ToolBox.loadApi("GPS-TIME") + "start=" + time[0] + "&" + "end="
-						+ time[1];
-
 			}
 
 			else {
@@ -224,8 +214,9 @@ public class Model implements Subject {
 			else if (ToolBox.validateUTC(update.message().text())) {
 
 				String time[] = update.message().text().split(String.valueOf(update.message().text().charAt(4)));
-				this.time.put(update.message().chat().id(), new String(time[0] + "-" + time[1]));
-				data = "Results for the time: " + time[0] + " to " + time[1];
+				data = "Your car's status: " + ToolBox.loadApi("GPS-TIME") + "start=" + time[0] + "&" + "end="
+						+ time[1];
+				
 			} else {
 				data = ToolBox.loadDialogue("DATA-NOT-VALID");
 			}
