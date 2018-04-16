@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.JsonSyntaxException;
 import com.pengrad.telegrambot.TelegramBot;
@@ -30,14 +31,24 @@ import controller.ControllerRegisterCar;
 import controller.SearchStrategy;
 import model.Model;
 import model.ToolBox;
+import okhttp3.OkHttpClient;
 
 public class View implements Observer {
 
+	
 	public View(Model model, String token) throws FileNotFoundException, IOException {
-		this.model = model;
-		this.bot = TelegramBotAdapter.build(token);
-		this.getDialogues();
-	}
+	    this.model = model;
+	    
+	    OkHttpClient client = new OkHttpClient.Builder()
+	              .connectTimeout(15, TimeUnit.SECONDS)
+	              .writeTimeout(15, TimeUnit.SECONDS)
+	              .readTimeout(60, TimeUnit.SECONDS)
+	              .build();
+	    
+	    this.bot = TelegramBotAdapter.buildCustom(token, client);
+	    this.getDialogues();
+	  }
+	
 
 	private Model model;
 	private TelegramBot bot;
@@ -85,7 +96,12 @@ public class View implements Observer {
 
 	public void receiveUsersMessages() throws JsonSyntaxException, IOException {
 
-		updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
+		try {
+		      updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex).timeout(0));
+		} catch (Exception e) {
+		      System.out.println(e.getMessage());
+		      return;
+		}
 
 		List<Update> updates = updatesResponse.updates();
 
@@ -100,7 +116,12 @@ public class View implements Observer {
 
 		while (true) {
 
-			updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex));
+			try {
+			      updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex).timeout(0));
+			} catch (Exception e) {
+			      System.out.println(e.getMessage());
+			      return;
+			}
 
 			updates = updatesResponse.updates();
 

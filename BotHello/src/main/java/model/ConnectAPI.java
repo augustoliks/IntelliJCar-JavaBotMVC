@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.concurrent.TimeoutException;
 
 public class ConnectAPI {
 
@@ -63,10 +64,10 @@ public class ConnectAPI {
 			}
 
 			System.out.println("\tReturn from Server:\n\n " + json);
-
+			
 			return json;
 
-		} catch (Exception NullPointerException) {
+		} catch (Exception e) {
 			System.out.println("\tERRO in the connection for: " + serverUrl);
 			return null;
 		}

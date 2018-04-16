@@ -148,7 +148,7 @@ public class Model implements Subject {
 			}
 
 			// Time = UTC de 4 posicoes
-			else if (ToolBox.validateUTC( this.time.get(update.message().chat().id()) )
+			else if (ToolBox.validateUTC(this.time.get(update.message().chat().id()))
 					&& this.time.get(update.message().chat().id()).length() == 4) {
 				data = "Your car's status: " + ToolBox.loadApi("GPS-NOW") + "\n\nLocalization in Google Maps: "
 						+ this.cars.get(index).getMaps();
@@ -157,7 +157,6 @@ public class Model implements Subject {
 			else {
 				data = ToolBox.loadDialogue("DATA-NOT-VALID");
 			}
-
 
 		}
 		if (data != null) {
@@ -203,12 +202,11 @@ public class Model implements Subject {
 				this.time.put(update.message().chat().id(), new String("now"));
 				data = "Results for the time: " + time.get(update.message().chat().id());
 
-			} else if (ToolBox.validateUTC(update.message().text())
-					&& update.message().text().length() == 4) {
-				
+			} else if (ToolBox.validateUTC(update.message().text()) && update.message().text().length() == 4) {
+
 				this.time.put(update.message().chat().id(), new String(update.message().text()));
 				data = "Results for the time: " + time.get(update.message().chat().id());
-		
+
 			}
 
 			else if (ToolBox.validateUTC(update.message().text())) {
@@ -216,7 +214,7 @@ public class Model implements Subject {
 				String time[] = update.message().text().split(String.valueOf(update.message().text().charAt(4)));
 				data = "Your car's status: " + ToolBox.loadApi("GPS-TIME") + "start=" + time[0] + "&" + "end="
 						+ time[1];
-				
+
 			} else {
 				data = ToolBox.loadDialogue("DATA-NOT-VALID");
 			}
@@ -231,10 +229,9 @@ public class Model implements Subject {
 
 	// Enviar mensagem
 	private void inviteMessage(String data, Update update) throws FileNotFoundException, IOException {
-		
+
 		System.out.println(">>> CLASSE MODEL:\n->\tRotina inviteMessage:");
 
-		
 		if (data != null) {
 			this.notifyObservers(update.message().chat().id(), data);
 			System.out.println("\t * Enviei isso: " + data + " -> " + update.message().chat().username() + " - ChatID:"
@@ -274,12 +271,12 @@ public class Model implements Subject {
 
 		for (int k = 0; k < this.cars.size(); k++) {
 			if (this.cars.get(k).getId() == update.message().chat().id()) {
-				System.out.println("\t*UserID: "+update.message().chat().id()+"\n\t*Cadastrado no indice: "+k);
+				System.out.println("\t*UserID: " + update.message().chat().id() + "\n\t*Cadastrado no indice: " + k);
 				return k;
 			}
 		}
 
-		System.out.println("\t*UserID: "+update.message().chat().id()+"\n\t*Nao possui cadastro");
+		System.out.println("\t*UserID: " + update.message().chat().id() + "\n\t*Nao possui cadastro");
 		return -1;
 
 	}
