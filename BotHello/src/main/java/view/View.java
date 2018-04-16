@@ -99,8 +99,8 @@ public class View implements Observer {
 		try {
 		      updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex).timeout(0));
 		} catch (Exception e) {
-		      System.out.println(e.getMessage());
-		      return;
+		      System.out.println("\n!!!EERO NO updateResponse fora do while(true)!!!\n"+e.getMessage());
+		      
 		}
 
 		List<Update> updates = updatesResponse.updates();
@@ -119,8 +119,8 @@ public class View implements Observer {
 			try {
 			      updatesResponse = bot.execute(new GetUpdates().limit(100).offset(queuesIndex).timeout(0));
 			} catch (Exception e) {
-			      System.out.println(e.getMessage());
-			      return;
+				System.out.println("\n!!!EERO NO updateResponse dentro do while(true)!!!\n"+e.getMessage());
+				continue;
 			}
 
 			updates = updatesResponse.updates();
