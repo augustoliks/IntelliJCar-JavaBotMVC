@@ -9,26 +9,11 @@ public class Car {
 	private String lat;
 	private String lon;
 	private String tsp;
-	private String sal;
-	private String dad;
 	private String gsm;
-	private String maps;
-
-	public String getMaps() {
-		return maps;
-	}
-
-	public void setMaps(String maps) {
-		this.maps = maps;
-	}
 
 	public Car(long id) {
 		super();
 		this.id = id;
-	}
-
-	public String getSal() {
-		return sal;
 	}
 
 	public String getTsp() {
@@ -37,18 +22,6 @@ public class Car {
 
 	public void setTsp(String tsp) {
 		this.tsp = tsp;
-	}
-
-	public void setSal(String sal) {
-		this.sal = sal;
-	}
-
-	public String getDad() {
-		return dad;
-	}
-
-	public void setDad(String dad) {
-		this.dad = dad;
 	}
 
 	public String getGsm() {

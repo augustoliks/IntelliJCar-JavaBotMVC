@@ -20,13 +20,11 @@ import com.pengrad.telegrambot.response.BaseResponse;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 import com.pengrad.telegrambot.response.SendResponse;
 
-import controller.ControllerBal;
 import controller.ControllerBat;
 import controller.ControllerDateIndex;
 import controller.ControllerGPS;
 import controller.ControllerGas;
 import controller.ControllerGsm;
-import controller.ControllerNet;
 import controller.ControllerRegisterCar;
 import controller.SearchStrategy;
 import model.Model;
@@ -61,20 +59,16 @@ public class View implements Observer {
 	private static String btnGas;
 	private static String btnGps;
 	private static String btnGsm;
-	private static String btnNet;
 	private static String btnTsp;
 	private static String btnBat;
-	private static String btnBal;
 
 	private void getDialogues() throws FileNotFoundException, IOException {
 		this.msgHello = ToolBox.loadDialogue("HELLO");
 		this.btnGas = ToolBox.loadDialogue("GAS");
 		this.btnGps = ToolBox.loadDialogue("GPS");
 		this.btnGsm = ToolBox.loadDialogue("GSM");
-		this.btnNet = ToolBox.loadDialogue("NET");
 		this.btnTsp = ToolBox.loadDialogue("TSP");
 		this.btnBat = ToolBox.loadDialogue("BAT");
-		this.btnBal = ToolBox.loadDialogue("BAL");
 	}
 
 	int queuesIndex = 0;
@@ -84,9 +78,7 @@ public class View implements Observer {
 	static final int stateGAS = 2;
 	static final int stateGPS = 3;
 	static final int stateGSM = 4;
-	static final int stateNET = 5;
 	static final int stateBAT = 6;
-	static final int stateBAL = 7;
 
 	private Map<Long, Integer> state = new HashMap<Long, Integer>();
 
@@ -109,7 +101,6 @@ public class View implements Observer {
 
 		for (Update update : updates) {
 			queuesIndex = update.updateId() + 1;
-			System.out.println(update.message().text());
 		}
 
 		System.out.println("Lista limpa!\n");
@@ -151,10 +142,10 @@ public class View implements Observer {
 
 					sendResponse = bot.execute(new SendMessage(update.message().chat().id(),
 							"Hello " + update.message().chat().firstName() + "!!!\n" + msgHello)
-									.replyMarkup(new ReplyKeyboardMarkup(new String[] { btnGps, btnGas },
-											new String[] { btnBat, btnNet }, new String[] { btnBal, btnGsm },
-											new String[] { btnTsp })));
-
+							.replyMarkup(new ReplyKeyboardMarkup(
+									new String[] { btnGps, btnGas },
+									new String[] { btnBat, btnGsm}, 
+									new String[] { btnTsp })));
 				}
 
 				if (state.get(update.message().chat().id()) == null) {
@@ -171,9 +162,6 @@ public class View implements Observer {
 				else if (update.message().text().equals(btnBat)) {
 					state.put(update.message().chat().id(), stateBAT);
 
-				} else if (update.message().text().equals(btnBal)) {
-					state.put(update.message().chat().id(), stateBAL);
-
 				} else if (update.message().text().equals(btnGas)) {
 					state.put(update.message().chat().id(), stateGAS);
 
@@ -182,11 +170,8 @@ public class View implements Observer {
 
 				} else if (update.message().text().equals(btnGsm)) {
 					state.put(update.message().chat().id(), stateGSM);
-
-				} else if (update.message().text().equals(btnNet)) {
-					state.put(update.message().chat().id(), stateNET);
 				}
-
+				
 				switch (state.get(update.message().chat().id())) {
 
 					case stateTIME: {
@@ -194,13 +179,7 @@ public class View implements Observer {
 						this.searchBehaviour = true;
 						break;
 					}
-	
-					case stateBAL: {
-						setControllerSearch(new ControllerBal(model, this));
-						this.searchBehaviour = true;
-						break;
-					}
-	
+
 					case stateBAT: {
 						setControllerSearch(new ControllerBat(model, this));
 						this.searchBehaviour = true;
@@ -219,12 +198,6 @@ public class View implements Observer {
 					}
 					case stateGPS: {
 						setControllerSearch(new ControllerGPS(model, this));
-						this.searchBehaviour = true;
-						break;
-					}
-	
-					case stateNET: {
-						setControllerSearch(new ControllerNet(model, this));
 						this.searchBehaviour = true;
 						break;
 					}

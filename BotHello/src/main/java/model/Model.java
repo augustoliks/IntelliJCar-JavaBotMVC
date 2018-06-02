@@ -23,6 +23,44 @@ public class Model implements Subject {
 
 	private Map<Long, String> time = new HashMap<Long, String>();
 
+	
+	// Setar o indice dos resultados
+	public void searchTime(Update update) throws FileNotFoundException, IOException {
+
+		System.out.println(">>> CLASSE MODEL:\n->\tRotina searchTime:");
+
+		String data = null;
+	
+		int index = this.verifyRegister(update);
+
+		DateJcar dateJcar = new DateJcar(update.message().text());
+		
+		if (index != -1) {
+
+			if( dateJcar.getValue() != null) {
+				
+				if(dateJcar.isRouteToday || dateJcar.isRouteAnotherDay) {
+					data = ToolBox.loadApi("SERVER_ADDRESS")+dateJcar.getValue();
+				}
+				else {
+					this.time.put(update.message().chat().id(), dateJcar.getValue());
+					data = "Results for the time: " + update.message().text();
+				}
+				
+			}
+			else {
+				data = "Data or Hour not Valid";
+			}
+
+			System.out.println(
+					"\tUsuário:" + update.message().chat().username() + " - ChatID:" + update.message().chat().id());
+			System.out.println("\tSetou o indice UTC: " + this.time.get(update.message().chat().id()));
+		}
+		
+		this.inviteMessage(data, update);
+
+	}
+
 	@Override
 	public void registerObserver(Observer observer) {
 		observers.add(observer);
@@ -59,22 +97,6 @@ public class Model implements Subject {
 		this.inviteMessage(data, update);
 	}
 
-	// SALDO : getSal : Balance Available
-	public void searchBal(Update update) throws JsonSyntaxException, IOException {
-		System.out.println(">>> CLASSE MODEL:\n\tRotina searchBal:");
-
-		String data = null;
-
-		int index = this.verifyRegister(update);
-
-		if (index != -1) {
-			this.populityDatas(update);
-			data = this.cars.get(index).getSal();
-		}
-
-		this.inviteMessage(data, update);
-
-	}
 
 	// GASOLINA : getGas : Gasoline
 	public void searchGas(Update update) throws JsonSyntaxException, IOException {
@@ -112,23 +134,6 @@ public class Model implements Subject {
 
 	}
 
-	// CONSUMO DE DADOS : getDad : Internet Franchise Available
-	public void searchNet(Update update) throws JsonSyntaxException, IOException {
-
-		System.out.println(">>> CLASSE MODEL:\n->\tRotina searchNet:");
-		String data = null;
-
-		int index = this.verifyRegister(update);
-
-		if (index != -1) {
-			this.populityDatas(update);
-			data = this.cars.get(index).getDad();
-		}
-
-		this.inviteMessage(data, update);
-
-	}
-
 	// GPS : getGps : GPS
 	public void searchGPS(Update update) throws JsonSyntaxException, IOException {
 
@@ -140,29 +145,26 @@ public class Model implements Subject {
 		this.populityDatas(update);
 
 		if (index != -1) {
-
-			// Time = NOW
-			if (this.time.get(update.message().chat().id()).equals("now")) {
-				data = "Your car's status: " + ToolBox.loadApi("GPS-NOW") + "\n\nLocalization in Google Maps: "
-						+ this.cars.get(index).getMaps();
+			
+			if (this.cars.get(index).getLat() == "\"Servers not avaible or Data not validate\"") {
+				data = "Servers not avaible or Data not validate";
 			}
-
-			// Time = UTC de 4 posicoes
-			else if (ToolBox.validateUTC(this.time.get(update.message().chat().id()))
-					&& this.time.get(update.message().chat().id()).length() == 4) {
-				data = "Your car's status: " + ToolBox.loadApi("GPS-NOW") + "\n\nLocalization in Google Maps: "
-						+ this.cars.get(index).getMaps();
-			}
-
 			else {
-				data = ToolBox.loadDialogue("DATA-NOT-VALID");
+				data = "Your car's status: " 
+					+ ToolBox.loadApi("GOOGLE-MAPS-STATUS")
+					+ "/onepoint?date=today&index=now"
+					+ "\n\nYour car's status: "
+					+ ToolBox.loadApi("GOOGLE-MAPS-STATUS")
+					+ this.time.get(update.message().chat().id())
+					+ "\n";
 			}
-
+			
 		}
 		if (data != null) {
 			this.populityDatas(update);
 		}
 		this.inviteMessage(data, update);
+
 	}
 
 	// Registrar carro
@@ -179,50 +181,9 @@ public class Model implements Subject {
 		} else {
 			data = ToolBox.loadDialogue("REGISTER-CAR");
 			this.cars.add(new Car(update.message().chat().id()));
-			this.time.put(update.message().chat().id(), new String("now"));
+			this.time.put(update.message().chat().id(), new String("/get/data/now"));
 		}
 
-		this.inviteMessage(data, update);
-
-	}
-
-	// Setar o indice dos resultados
-	public void searchTime(Update update) throws FileNotFoundException, IOException {
-
-		System.out.println(">>> CLASSE MODEL:\n->\tRotina searchTime:");
-
-		String data = null;
-
-		int index = this.verifyRegister(update);
-
-		if (index != -1) {
-
-			if (update.message().text().equals("now")) {
-
-				this.time.put(update.message().chat().id(), new String("now"));
-				data = "Results for the time: " + time.get(update.message().chat().id());
-
-			} else if (ToolBox.validateUTC(update.message().text()) && update.message().text().length() == 4) {
-
-				this.time.put(update.message().chat().id(), new String(update.message().text()));
-				data = "Results for the time: " + time.get(update.message().chat().id());
-
-			}
-
-			else if (ToolBox.validateUTC(update.message().text())) {
-
-				String time[] = update.message().text().split(String.valueOf(update.message().text().charAt(4)));
-				data = "Your car's status: " + ToolBox.loadApi("GPS-TIME") + "start=" + time[0] + "&" + "end="
-						+ time[1];
-
-			} else {
-				data = ToolBox.loadDialogue("DATA-NOT-VALID");
-			}
-
-			System.out.println(
-					"\tUsuário:" + update.message().chat().username() + " - ChatID:" + update.message().chat().id());
-			System.out.println("\tSetou o indice UTC: " + this.time.get(update.message().chat().id()));
-		}
 		this.inviteMessage(data, update);
 
 	}

@@ -1,55 +1,83 @@
-from flask import Flask
-from flask import render_template
-from flask import request
+from flask import Flask, render_template, request
 from flask_restful import Api
-from routes.routes import Controller_get_data
-from routes.routes import Controller_set_data
-from routes.routes import Controller_set_balance
-from routes.routes import Controller_get_history
-from routes.routes import Controller_get_id
+from routes.controller import Controller
+from routes.routes import *
+from jcar.utils.toolbox import ToolboxJson
+from jcar.pop_model.database import DataBase
 
-from jcar.utils.utils import Util
-
-
-import ast
-
-app = Flask(__name__)
 #app.jinja_env.line_statement_prefix = '$'
+app = Flask(__name__)
 api = Api(app)
 
-api.add_resource(Controller_set_data, "/set/gas=<gas>&bat=<bat>&lat=<lat>&lon=<lon>&tsp=<tsp>&gsm=<gsm>")
-api.add_resource(Controller_set_balance, "/set/sal=<sal>&dad=<dad>")
+controller = Controller()
 
-api.add_resource(Controller_get_data, "/get/")
-api.add_resource(Controller_get_history, "/get/history")
+#set data
+api.add_resource(Controller_set_data,"/set/gas=<gas>&bat=<bat>&lat=<lat>&lon=<lon>&tsp=<tsp>&gsm=<gsm>")
 
-api.add_resource(Controller_get_id, "/get/id=<id>")
+#by hour
+api.add_resource(Controller_get_data,"/get/data/date=<date>&index=<index>")
+api.add_resource(Controller_get_data_now,"/get/data/now")
+
+#by day
+api.add_resource(Controller_get_history,"/get/history/date=<date>")
+api.add_resource(Controller_get_history_today,"/get/history/today")
+
 
 @app.route("/", methods=['GET'])
 def all_points():
-    load = open('database/history.json')
-    json = ast.literal_eval( load.read() )
+    icon = open('static/logo.png', 'rb')
+    
+    today = controller.get_last_date() 
+    json = controller.get_history(today[:8])
 
-    icon = open('static/stallman.png', 'rb')
+    return render_template('index.html', json = json, icon = icon)
 
+@app.route("/onepoint", methods=['GET'])
+def one_point():
+    icon = open('static/logo.png', 'rb')
+
+    date = request.args.get("date")
+    index = request.args.get("index")
+    
+    json = {}
+
+    if (date == 'today' and index == 'now'):
+        json = {'now' : controller.get_data_now()}
+
+    elif (date == 'today'):
+        today = controller.get_last_date()
+        json = {'today' : controller.get_data(today[:8], index)}
+    
+    else:
+        json = {date : controller.get_data(date, index)}
+        
     return render_template('index.html', json = json, icon = icon)
 
 @app.route("/route", methods=['GET'])
 def some_points():
+    icon = open('static/logo.png', 'rb')
 
-    json = Util(request.args.get("start"), request.args.get("end"))
-    icon = open('static/stallman.png', 'rb')
+    date = request.args.get("date")
+    start = request.args.get("start")
+    end = request.args.get("end")
 
-    json.cut_json()
+    json = controller.get_history(date)
+    json_new = ToolboxJson(json, start, end)
 
-    if (json.json_cut != 'ERRO'):
-        return render_template('index.html', json = json.json_cut, icon = icon)
+    json_new.cut_json()
+
+    if (json_new.json_cut != 'ERRO'):
+        return render_template('index.html', json = json_new.json_cut, icon = icon)
     else:
-        return 'Set start and end hour valide\nCorrect Format example: start= 1010 end=2020'
+        return 'Set start and end hour valide\nCorrect Format example: start=1010 end=2020'
+
 
 if __name__ == '__main__':
-#    app.run()
     app.run(host='0.0.0.0', port=5000, debug=True)
 
-#http://localhost:5000/set/gas=666&bat=666&lat=666&lon=666
+#http://localhost:5000/route?date=20183111&start=1010&end=2020
+
+#http://localhost:5000/set/gas=666&bat=666&lat=666&lon=666&tsp=20183112000199&gsm=123
 #http://localhost:5000/route?start=1010&end=2020
+
+#http://localhost:5000/get/history/date=20180408&index=0007

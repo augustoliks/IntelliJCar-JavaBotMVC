@@ -7,7 +7,6 @@
     </head>
     <body>
 
-
     <style>
     html, body { height: 100%; margin: 0; padding: 0; }
     #map { height: 100%; width: 100%; height: 100%; }
@@ -20,15 +19,13 @@
 
         var stations=[]
         {% for item in json %}
-          {% if item!='x' %}
           stations.push(
             {
               lat: {{json[item]['lat']}},
               lng: {{json[item]['lon']}},
-              name: 'Time: {{item}} (HourMinute HHMM)\nBattery: {{json[item]['bat']}}\nJcar Nivel: {{json[item]['gsm']}}\nBalance Avaible: {{json[item]['sal']}}\nFranchise Avaible: {{json[item]['dad']}}\nGasoline: {{json[item]['gas']}}\nMaps: {{json[item]['maps']}}',
+              name: 'Time: {{item}} (HourMinute HHMM)\nBattery: {{json[item]['bat']}}\nJcar Nivel: {{json[item]['gsm']}}\nGasoline: {{json[item]['gas']}}',
             }
           )
-          {% endif %}
         {% endfor %}
 
         // Zoom and center map automatically by stations (each station will be in visible map area)

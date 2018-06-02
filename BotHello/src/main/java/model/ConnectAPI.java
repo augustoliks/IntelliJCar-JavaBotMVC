@@ -4,43 +4,53 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.TimeoutException;
 
 public class ConnectAPI {
 
-	public String getJsonFromServer(String index) throws IOException {
-		String uri;
+	public String getJsonFromServer(String uri) throws IOException {
 
-		System.out.println(">>> CLASSE ConnectAPI\n->\tRotina getJsonFromServer: <INDEX>"+index);
-		
-		if (index.equals("now")) {
-			uri = "get/";
-		} else {
-			uri = "get/id=" + index;
-		}
+		System.out.println(">>> CLASSE ConnectAPI\n->\tRotina getJsonFromServer: <INDEX> "+uri);
 
-		String herokuJson = this.connectServer(ToolBox.loadApi("HEROKU") + uri);
- 
-		if (herokuJson != null) {
+		String json = this.connectServer(ToolBox.loadApi("SERVER_ADDRESS") + uri);
 
-			return herokuJson;
-		}
-
-		String raspberryJson = this.connectServer(ToolBox.loadApi("RASPBERRY") + uri);
-
-		if (raspberryJson != null) {
-			return raspberryJson;
+		if (json != null) {
+			return json;
 		}
 
 		else {
 			System.out.println("DEU RUIM");
 			String errorAlert = "\"Servers not avaible or Data not validate\"";
-			return "{" + "\"bat\": " + errorAlert + "," + "\"dad\": " + errorAlert + "," + "\"gas\": " + errorAlert
-					+ "," + "\"gsm\": " + errorAlert + "," + "\"lat\": " + errorAlert + "," + "\"lon\": " + errorAlert
-					+ "," + "\"maps\": " + errorAlert + "," + "\"sal\": " + errorAlert + "," + "\"tsp\": " + errorAlert
+			return "{" 
+					+ "\"bat\": " + errorAlert + "," 
+					+ "\"gas\": " + errorAlert + "," 
+					+ "\"gsm\": " + errorAlert + "," 
+					+ "\"lat\": " + errorAlert + "," 
+					+ "\"lon\": " + errorAlert + "," 
+					+ "\"tsp\": " + errorAlert
 					+ "}";
 		}
+	}
+	
+	public boolean testConnectionServer(String url) throws MalformedURLException, IOException {
+		
+		
+		System.out.println(url);
+		
+		HttpURLConnection c1 = (HttpURLConnection) new URL(url).openConnection();
+        String responseMessage;
+		
+        responseMessage = c1.getResponseMessage();
+		
+		if (responseMessage.equals("OK")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
 	}
 
 	private String connectServer(String serverUrl) throws IOException {

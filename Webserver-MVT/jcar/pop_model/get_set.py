@@ -1,92 +1,49 @@
-from jcar.utils.utils import Util
-import ast
-from datetime import datetime
+from jcar.pop_model.database import DataBase
 
 class GetSet():
 
     def __init__(self):
+        self.database = DataBase()
+        self.today = self.database.last_date()[:8]
         self.data = {'gas': None,
                      'bat': None,
                      'lat': None,
                      'lon': None,
-                     'sal': None,
-                     'dad': None,
-                     'tsp': None,
                      'gsm': None,
-                     'maps': None
+                     'tsp': None
                      }
-
-        self.history = {'gas': None,
-                     'bat': None,
-                     'lat': None,
-                     'lon': None,
-                     'sal': None,
-                     'dad': None,
-                     'tsp': None,
-                     'gsm': None,
-                     'maps': None
-                     }
-
-    def read_history(self):
-        load = open('database/history.json')
-        self.history = ast.literal_eval( load.read() )
-
-    def write_history(self):
-        self.read_history()
-        utc_hm = self.data['tsp'][-6:-2]
-        self.history[utc_hm] = self.data
-
-        json = open ('database/history.json', 'w')
-        json.write( str(self.history) )
-        json.close()
-
-    def read_json(self):
-        load = open('database/informations.json')
-        self.data = ast.literal_eval( load.read() )
-
-    def write_json(self):
-        req_min = int(self.data['tsp'][-4:-2])
-
-        if req_min % 1 == 0:
-            self.write_history()
-
-        json = open ('database/informations.json', 'w')
-        json.write( str(self.data) )
-        json.close()
-
-    def get_history(self):
-        self.read_history()
-        return self.history
 
     def set_data(self, gas, bat, lat, lon, tsp, gsm):
-        self.read_json()
+        self.data['gas'] = gas
+        self.data['bat'] = bat
+        self.data['lat'] = lat
+        self.data['lon'] = lon
+        self.data['gsm'] = gsm
+        self.data['tsp'] = tsp
 
-        self.data ['gas'] = gas
-        self.data ['bat'] = bat
-        self.data ['lat'] = lat
-        self.data ['lon'] = lon
-        self.data ['tsp'] = tsp
-        self.data ['gsm'] = gsm
-        self.data ['maps'] = "http://maps.google.com/maps?q="+lat+","+lon
+        date = tsp[:8]
+        hour = tsp[8:-2]
 
-        self.write_json()
-
+        json = { hour : self.data }
+        
+        self.today = date
+        self.database.update_post(date, json)
+        self.database.update_post('now', self.data)
+       
         return self.data
 
-    def get_data(self):
-        self.read_json()
-        return self.data
+    def get_history(self, date):
+        return self.database.get_doc(date)
 
-    def set_balance(self, sal, dad):
-        self.read_json()
+    def get_data(self, date, index):
+        json = self.database.get_doc(date)
+        return json[index]
 
-        self.data ['sal'] = sal
-        self.data ['dad'] = dad
+    def get_history_today(self):
+        return self.database.get_doc(self.today)
 
-        self.write_json()
+    def get_data_now(self):
+        return self.database.get_doc('now')
 
-        return self.data
-
-    def get_id(self, id):
-        self.get_history()
-        return self.history[str(id)]
+    def get_last_date(self):
+        return self.database.last_date()
